@@ -1,8 +1,132 @@
 <html>
+    <style>
+        .coinsbutton {
+            margin-top:50px;
+            border-radius: 0px;
+            width:150px;
+            height: 150px;
+            background-color: red;
+            color: white;
+        }
+
+        .upgradebutton {
+            margin-top:50px;
+            border-radius: 0px;
+            width:150px;
+            height: 150px;
+            background-color: blue;
+            color: white;
+        }  
+
+        .cpsbutton {
+            margin-top:50px;
+            border-radius: 0px;
+            width:150px;
+            height: 150px;
+            background-color: green;
+            color: white;
+        }     
+
+        .resetbutton {
+            border-radius: 0px;
+            width:150px;
+            height: 150px;
+            background-color: red;
+            color: white;
+        }           
+    </style>
     <body>
-        
+        <button id="resetButton" class="resetbutton" onclick="ClearData()">Klik Om te opnieuw te begginen (Gebruik op eigen risico!)</button>
+        <div style="text-align: center;margin-top:200px">
+            <div id="pointsDiv" style="font-size: 30px"></div>
+            <div>
+                <button id="cpsButton" onclick="onCps()" class="cpsbutton"></button>
+                <button onclick="onCoinsClick()" class="coinsbutton">Klik voor Coins</button>
+                <button id="upgradeButton" onclick="onUpgrade()" class="upgradebutton"></button>
+                
+            </div>
+        </div>
     </body>
     <script>
-    
+        let points = localStorage.getItem('points') == null ? 0 : parseInt(localStorage.getItem('points'));
+        let upgrade = localStorage.getItem('upgrade') == null ? 1 : parseInt(localStorage.getItem('upgrade'));
+        let upgradePrice = localStorage.getItem('upgradePrice') == null ? 1 : parseInt(localStorage.getItem('upgradePrice'));
+        let buttonText = "Klik om te upgraden Kost:";
+        let cps = localStorage.getItem('cps') == null ? 1 : parseInt(localStorage.getItem('cps'));
+        let cpsPrice = localStorage.getItem('cpsPrice') == null ? 1 : parseInt(localStorage.getItem('cpsPrice'));
+
+        setButtonText();
+        setCps();
+        setCpsButton();
+
+        function onCoinsClick() {
+
+            points = points + (upgrade * 1);
+            document.getElementById('pointsDiv').innerText = points;
+            store();
+        }    
+
+        function onUpgrade() {
+            if (points >= upgradePrice) {
+                points = points - upgradePrice;
+                document.getElementById('pointsDiv').innerText = points;
+                upgradePrice = upgradePrice * 4;
+                setButtonText();
+                upgrade = upgrade * 3;
+                store();
+            } else {
+                alert('Je hebt niet genoeg Coins om te upgraden');
+            }
+        }
+
+        function setButtonText(){
+            document.getElementById('upgradeButton').innerText = buttonText + upgradePrice;
+        }
+
+        function setCps() {
+            points = points + cps;
+            document.getElementById('pointsDiv').innerText = points;
+            setTimeout(function() { setCps();}, 1000);            
+            store();
+        }
+
+        function onCps() {
+            if (points >= cpsPrice) {
+                points = points - cpsPrice;
+                document.getElementById('pointsDiv').innerText = points;
+                cpsPrice = cpsPrice * 4;
+                cps = cps * 2;
+                document.getElementById('cpsButton').innerText = 'Klik om automatische coins te upgraden Kost:' + cpsPrice; 
+                store();
+            } else {
+                alert('Je hebt niet genoeg Coins om dat te upgraden')
+            }            
+        }
+
+        function setCpsButton() {
+            document.getElementById('cpsButton').innerText = 'Klik om automatische coins te upgraden Kost:' + cpsPrice;;
+        }
+
+        function store() {
+            localStorage.setItem('points', points);
+            localStorage.setItem('upgrade', upgrade);
+            localStorage.setItem('upgradePrice', upgradePrice);
+            localStorage.setItem('cps', cps);
+            localStorage.setItem('cpsPrice', cpsPrice);
+        }
+        function ClearData() {
+
+            if (confirm('Weet je het zeker?') == true) {
+                points = 0;
+                cps = 1;
+                cpsPrice = 1;
+                upgradePrice = 1;
+                upgrade = 1;
+                store();             
+            } else {
+                alert('Niet opnieuw begonnen')
+            }
+        }      
+        
     </script>
 </html>
